@@ -30,4 +30,15 @@ def detect_face(my_image):
     x, y, w, h = faces[0]
     return gray[y:y+h,x:x+w]
 
+def train_data(faces, labels):
+    guinea_pigs = np.unique(labels)
+    for i in range(0,len(labels)):
+        if labels[i] in guinea_pigs:
+            index, = np.where(guinea_pigs == labels[i])
+            labels[i] = index
+    face_recognizer = cv.face.LBPHFaceRecognizer_create()
+    face_recognizer.train(faces, np.array(labels))
+    return face_recognizer
+
 faces, labels = prepare_data(TRAINING_DATA_PATH)
+face_recognizer = train_data(faces, labels)
