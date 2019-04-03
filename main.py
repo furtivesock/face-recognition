@@ -2,9 +2,28 @@ import os
 import re
 import numpy as np
 import cv2 as cv
+import sys
+import urllib.request as urllib
 
 TRAINING_DATA_PATH = "training_data"
 HAAR_CASCADE = "haarcascade_frontalface_default.xml"
+# If you don't want to pass argument to the program, you can replace the url below instead :
+URL_TO_TEST_IMAGE = "http://vis-www.cs.umass.edu/lfw/images/Uma_Thurman/Uma_Thurman_0002.jpg"
+
+# Convert the url into an image. Credits to pyimagesearch
+def url_to_image(url):
+	resp = urllib.urlopen(url)
+	image = np.asarray(bytearray(resp.read()), dtype="uint8")
+	image = cv.imdecode(image, cv2.IMREAD_COLOR)
+ 
+	return image
+
+# Url passed as an argument to the program
+if not sys.argv[1]:
+    url = URL_TO_IMAGE
+else:
+    url = sys.argv[1]
+image_to_predict = url_to_image(url)
 
 def prepare_data(folder_path):
     faces = []
@@ -62,4 +81,4 @@ def who_is_this(my_image):
     cv.destroyAllWindows()
 
 # Debug
-who_is_this(TRAINING_DATA_PATH + "/uma_thurman1.jpg")
+who_is_this(image_to_predict)
