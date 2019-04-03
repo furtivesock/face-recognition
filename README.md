@@ -5,7 +5,8 @@ First try on face recognition algorithm for my English class
 ## Requirements
 
 - You need Python 3.7. If you didn't install it yet, don't forget to add the environnement variable to PATH when the installer asks you!
-- Type `pip install opencv-python`. OpenCV is a library with many and useful features for face detection and recognition.
+- Type `pip install opencv-python==3.4.2.16`. OpenCV is a library with many and useful features for face detection and recognition.
+- Type `pip install opencv-contrib-python==3.4.2.16` to use LBPH face recognizer, the algorithm used for training and recognizing your guinea pigs.
 - Type `pip install numpy`. We will need its N-dimensional arrays for OpenCV face recognizer.
 
 ## Installation
