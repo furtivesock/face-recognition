@@ -19,7 +19,7 @@ cd face-recognition
 
 ## Usage
 
-### Use your own faces
+### Feed the program with your faces
 
 1) Move your pictures (of human/animal/whatever faces) into `/training_data` folder. The more you add faces of one single person, the more the recognition will be efficient.
 2) For each person to identify, you need to rename his pictures like that : `[name][id].jpg/png/...`. `id` starts by 1.
@@ -36,3 +36,7 @@ training_data
 ├──...
 ├──delphine16.png
 ```
+
+### Test with a picture of your character
+
+Coming soon
