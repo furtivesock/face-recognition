@@ -39,4 +39,8 @@ training_data
 
 ### Test with a picture of your character
 
-Coming soon
+To test your picture, you need to get its url on the Internet (I made this choice to simplify my tests). Then, you have two ways to test it :
+- Pass it as an argument like `py main.py [url_of_your_image]`
+- Or, you can modify the const variable `URL_TO_TEST_IMAGE` at the beginning of the code. It must be a string.
+
+In any case, the program will display your image in a single window with the name of the person who it thinks it is (depending on your training data) and the confidence. The closer to 0 this number, the more accurate prediction is.
