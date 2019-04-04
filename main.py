@@ -9,7 +9,7 @@ TRAINING_DATA_PATH = "training_data"
 HAAR_CASCADE = "haarcascade_frontalface_default.xml"
 
 # If you don't want to pass argument to the program, you can replace the url below instead :
-URL_TO_TEST_IMAGE = "http://vis-www.cs.umass.edu/lfw/images/Uma_Thurman/Uma_Thurman_0003.jpg"
+URL_TO_TEST_IMAGE = "https://framapic.org/qpcBEgtWh6o5/NysVt07uOiPc.jpg"
 
 # Convert the url into an image. Credits to pyimagesearch
 def url_to_image(url):
@@ -76,13 +76,14 @@ def who_is_this(my_image):
         img = cv.imread(my_image)
     label, confidence = face_recognizer.predict(face)
     label_text = guinea_pigs[label] + " " + str(confidence)
-    print(label_text)
     
     x, y, w, h = rect
-    cv.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
-    cv.putText(img, label_text, (x, y-5), cv.FONT_HERSHEY_PLAIN, 0.8, (255, 0, 0), 1)
+    cv.rectangle(img, (x, y), (x+w, y+h), (0, 0, 255), 4)
+    cv.putText(img, label_text, (x, y-10), cv.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 2)
     
-    cv.imshow("Press any key to exit...",img)
+    height, width = img.shape[:2]
+    resized_img = cv.resize(img, (int(0.5*width), int(0.5*height)))
+    cv.imshow("Press any key to exit...",resized_img)
     cv.waitKey(0)
     cv.destroyAllWindows()
 
