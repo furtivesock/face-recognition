@@ -6,10 +6,8 @@ import sys
 import urllib.request as urllib
 
 TRAINING_DATA_PATH = "training_data"
+TEST_DATA_PATH = "test_data"
 HAAR_CASCADE = "haarcascade_frontalface_default.xml"
-
-# If you don't want to pass argument to the program, you can replace the url below instead :
-URL_TO_TEST_IMAGE = "https://framapic.org/qpcBEgtWh6o5/NysVt07uOiPc.jpg"
 
 # Convert the url into an image. Credits to pyimagesearch
 def url_to_image(url):
@@ -18,12 +16,18 @@ def url_to_image(url):
 	image = cv.imdecode(image, cv.IMREAD_COLOR)
 	return image
 
-# Url passed as an argument to the program
-if len(sys.argv) == 1:
-    url = URL_TO_TEST_IMAGE
+# Images urls (separated by spaces) passed as an argument to the program, if not, it will take all images contained in test_data folder
+images_to_predict = []
+if len(sys.argv) > 1:
+    for i in range(1,len(sys.argv)):
+        url = sys.argv[1]
+        images_to_predict.append(url_to_image(url))
 else:
-    url = sys.argv[1]
-image_to_predict = url_to_image(url)
+    for image in os.listdir(TEST_DATA_PATH):
+        images_to_predict.append(TEST_DATA_PATH + "/" + image)
+    print(images_to_predict)
+    if len(images_to_predict) == 0:
+        sys.exit("Error : No image in the test_data folder")
 
 def prepare_data(folder_path):
     faces = []
@@ -64,27 +68,32 @@ def train_data(faces, labels):
     face_recognizer.train(faces, np.array(labels))
     return face_recognizer
 
+print("Preparing data...")
 faces, guinea_pigs, labels = prepare_data(TRAINING_DATA_PATH)
+print("Training the", len(faces), "faces...")
 face_recognizer = train_data(faces, labels)
 
 def who_is_this(my_image):
-    face, rect = detect_face(my_image)
-
     if isinstance(my_image,np.ndarray):
         img = my_image
     else:
         img = cv.imread(my_image)
+    face, rect = detect_face(img)
     label, confidence = face_recognizer.predict(face)
     label_text = guinea_pigs[label] + " " + str(confidence)
     
+    print("Prediction :", label_text)
+
     x, y, w, h = rect
     cv.rectangle(img, (x, y), (x+w, y+h), (0, 0, 255), 4)
     cv.putText(img, label_text, (x, y-10), cv.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 2)
     
     height, width = img.shape[:2]
-    resized_img = cv.resize(img, (int(0.5*width), int(0.5*height)))
+    resized_img = cv.resize(img, (int(0.6*width), int(0.6*height)))
     cv.imshow("Press any key to exit...",resized_img)
     cv.waitKey(0)
     cv.destroyAllWindows()
 
-who_is_this(image_to_predict)
+print("Predicting your data...")
+for image in images_to_predict:
+    who_is_this(image)
