@@ -9,6 +9,8 @@ import urllib.request as urllib
 TRAINING_DATA_PATH = "training_data"
 TEST_DATA_PATH = "test_data"
 HAAR_CASCADE = "haarcascade_frontalface_default.xml"
+SCALE_FACTOR = 1.2
+MIN_NEIGHBORS = 8
 
 def url_to_image(url):
     """Convert the url into an image.
@@ -23,14 +25,14 @@ def url_to_image(url):
 images_to_predict = []
 if len(sys.argv) > 1:
     for i in range(1,len(sys.argv)):
-        url = sys.argv[1]
+        url = sys.argv[i]
         images_to_predict.append(url_to_image(url))
 else:
     for image in os.listdir(TEST_DATA_PATH):
         images_to_predict.append(TEST_DATA_PATH + "/" + image)
     print(images_to_predict)
     if len(images_to_predict) == 0:
-        sys.exit("Error : No image in the test_data folder")
+        sys.exit("Error : No image has been found in the test_data folder")
 
 def get_image(my_image):
     """Return an image (numpy array)
@@ -77,7 +79,12 @@ def detect_face(my_image):
     img = get_image(my_image)
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     face_cascade = cv.CascadeClassifier(HAAR_CASCADE)
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=SCALE_FACTOR, minNeighbors=MIN_NEIGHBORS)
+    
+    # If no face is detected
+    if (len(faces) == 0):
+        return None, None
+
     x, y, w, h = faces[0]
     return gray[y:y+h,x:x+w], faces[0]
 
@@ -101,11 +108,14 @@ def who_is_this(my_image):
     Show the image with the name of the mystery person and its associated confidence
     """
 
-    if isinstance(my_image,np.ndarray):
-        img = my_image
-    else:
-        img = cv.imread(my_image)
+    img = get_image(my_image)
     face, rect = detect_face(img)
+
+    # If no face detected
+    if face is None:
+        print("No face has been detected in this image")
+        return
+
     label, confidence = face_recognizer.predict(face)
     label_text = guinea_pigs[label] + " " + str(confidence)
     
@@ -124,3 +134,5 @@ def who_is_this(my_image):
 print("Predicting your data...")
 for image in images_to_predict:
     who_is_this(image)
+
+sys.exit()
