@@ -25,6 +25,7 @@ cd face-recognition
 You can of course remove all the sample data.
 
 **Note** : If you want to identify anything other than frontal faces, you need to modify the `HAAR_CASCADE`. You can find other haar cascades [here](https://github.com/opencv/opencv/tree/master/data/haarcascades).
+
 2) For each person to identify, you need to rename his pictures like that : `<name><id>.jpg/png/...`. `id` starts by 1.
 
 Your folder `training_data` should look like as follows :
