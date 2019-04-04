@@ -1,6 +1,6 @@
 # face-recognition
 
-First try on face recognition algorithm
+First try on face recognition program using Python, OpenCV and OpenCV's LBPH recognizer.
 
 ## Requirements
 
