@@ -7,20 +7,20 @@ import urllib.request as urllib
 
 TRAINING_DATA_PATH = "training_data"
 HAAR_CASCADE = "haarcascade_frontalface_default.xml"
+
 # If you don't want to pass argument to the program, you can replace the url below instead :
-URL_TO_TEST_IMAGE = "http://vis-www.cs.umass.edu/lfw/images/Uma_Thurman/Uma_Thurman_0002.jpg"
+URL_TO_TEST_IMAGE = "http://vis-www.cs.umass.edu/lfw/images/Uma_Thurman/Uma_Thurman_0003.jpg"
 
 # Convert the url into an image. Credits to pyimagesearch
 def url_to_image(url):
 	resp = urllib.urlopen(url)
 	image = np.asarray(bytearray(resp.read()), dtype="uint8")
-	image = cv.imdecode(image, cv2.IMREAD_COLOR)
- 
+	image = cv.imdecode(image, cv.IMREAD_COLOR)
 	return image
 
 # Url passed as an argument to the program
-if not sys.argv[1]:
-    url = URL_TO_IMAGE
+if len(sys.argv) == 1:
+    url = URL_TO_TEST_IMAGE
 else:
     url = sys.argv[1]
 image_to_predict = url_to_image(url)
@@ -49,7 +49,10 @@ def prepare_data(folder_path):
     return faces, guinea_pigs, labels
 
 def detect_face(my_image):
-    img = cv.imread(my_image)
+    if isinstance(my_image,np.ndarray):
+        img = my_image
+    else:
+        img = cv.imread(my_image)
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     face_cascade = cv.CascadeClassifier(HAAR_CASCADE)
     faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
@@ -67,18 +70,20 @@ face_recognizer = train_data(faces, labels)
 def who_is_this(my_image):
     face, rect = detect_face(my_image)
 
-    img = cv.imread(my_image)
-    label = face_recognizer.predict(face)[0]
-    label_text = guinea_pigs[label]
+    if isinstance(my_image,np.ndarray):
+        img = my_image
+    else:
+        img = cv.imread(my_image)
+    label, confidence = face_recognizer.predict(face)
+    label_text = guinea_pigs[label] + " " + str(confidence)
     print(label_text)
     
     x, y, w, h = rect
     cv.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
     cv.putText(img, label_text, (x, y-5), cv.FONT_HERSHEY_PLAIN, 0.8, (255, 0, 0), 1)
     
-    cv.imshow('Press any key to exit...',img)
+    cv.imshow("Press any key to exit...",img)
     cv.waitKey(0)
     cv.destroyAllWindows()
 
-# Debug
 who_is_this(image_to_predict)
